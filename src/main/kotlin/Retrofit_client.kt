@@ -13,6 +13,7 @@ object Retrofit_client {
                 retrofit = Retrofit.Builder()
                     .baseUrl(baseUrl)
                     .addConverterFactory(MoshiConverterFactory.create())
+                    .addConverterFactory(SimpleXmlConverterFactory.create())
                     .build()
             }
             return retrofit!!
@@ -22,6 +23,7 @@ object Retrofit_client {
             retrofit_xml = Retrofit.Builder()
                 .baseUrl(baseUrl)
                 .addConverterFactory(SimpleXmlConverterFactory.create())
+
                 .build()
         }
         return retrofit_xml!!

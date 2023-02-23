@@ -1,9 +1,5 @@
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.SerializationFeature
-import com.fasterxml.jackson.dataformat.xml.XmlMapper
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import retrofit2.*
+import retrofit2.converter.moshi.MoshiConverterFactory
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -16,8 +12,6 @@ private lateinit var list:List<news>
 open class Function {
     fun init()
     {
-        mService = Common.retrofitService
-        mService_xml = CommonXml.retrofitService
         println("0.Get Json | 1.Get Xml | 2.Exit")
         when(readln()){
             "0"-> getNewsJson()
@@ -26,7 +20,7 @@ open class Function {
         }
     }
     fun getNewsJson() = try {
-
+        mService = Common.retrofitService
         mService.getNews().enqueue(object : Callback<data_news> {
             override fun onFailure(call: Call<data_news>, t: Throwable) {
                 print(t.toString())
@@ -44,9 +38,10 @@ open class Function {
         print_console(ex.toString())
     }
     fun getNewsXml() = try {
+        mService_xml = CommonXml.retrofitService
         mService_xml.getNewsXml().enqueue(object : Callback<data_news_xml> {
             override fun onFailure(call: Call<data_news_xml>, t: Throwable) {
-                print("thr "+t.toString())
+                print(t.toString())
             }
             override fun onResponse(call: Call<data_news_xml>, response: Response<data_news_xml>) {
                 if(response.isSuccessful) {
@@ -113,7 +108,7 @@ open class Function {
             "2"-> init()
             "3"-> System.exit(0)
         }
-              retrofit_ok(xml_)
+            //  retrofit_ok(xml_)
     }
     fun date_converter(date:String):String{
         val serverDateFormat = SimpleDateFormat("yyyy-MM-dd' 'HH:mm:ss", Locale.getDefault())
@@ -123,7 +118,7 @@ open class Function {
     }
     private fun print_console(str:String)= println(str)
 
-    object Common {
+    companion object Common {
         val retrofitService: retrofit_interface
             get() = Retrofit_client.getClient(BASE_URL).create(retrofit_interface::class.java)
     }
