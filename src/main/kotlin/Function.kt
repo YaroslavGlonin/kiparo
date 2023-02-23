@@ -108,6 +108,7 @@ open class Function {
             "2"-> init()
             "3"-> System.exit(0)
         }
+
             //  retrofit_ok(xml_)
     }
     fun date_converter(date:String):String{
