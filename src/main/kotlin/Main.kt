@@ -1,4 +1,4 @@
-fun main() {
-    val func = Function()
-    func.init()
-}
+import kotlin.Function
+
+val func =Function()
+fun main() =func.init()

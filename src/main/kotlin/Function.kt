@@ -5,10 +5,9 @@ import java.util.*
 
 
 private val BASE_URL = "https://api2.kiparo.com"
-private lateinit var mService: retrofit_interface
-private lateinit var mService_xml: retrofit_interface
 private lateinit var list_xml:List<element>
 private lateinit var list:List<news>
+private lateinit var generalData: general_data
 open class Function {
     fun init()
     {
@@ -20,42 +19,22 @@ open class Function {
         }
     }
     fun getNewsJson() = try {
-        mService = Common.retrofitService
-        mService.getNews().enqueue(object : Callback<data_news> {
-            override fun onFailure(call: Call<data_news>, t: Throwable) {
-                print(t.toString())
-            }
-            override fun onResponse(call: Call<data_news>, response: Response<data_news>) {
-                if(response.isSuccessful) {
-                    list = response.body()!!.results
-                    retrofit_ok(false)
-                }
-                else print_console("No Successful")
-            }
-        })
+        val api = retrofit.create(BASE_URL).getNews().execute()
+        list = api.body()!!.results
+        retrofit_ok(false)
     }
     catch (ex:Exception){
         print_console(ex.toString())
     }
     fun getNewsXml() = try {
-        mService_xml = CommonXml.retrofitService
-        mService_xml.getNewsXml().enqueue(object : Callback<data_news_xml> {
-            override fun onFailure(call: Call<data_news_xml>, t: Throwable) {
-                print(t.toString())
-            }
-            override fun onResponse(call: Call<data_news_xml>, response: Response<data_news_xml>) {
-                if(response.isSuccessful) {
-                    list_xml = response.body()!!.results
-                    retrofit_ok(true)
-                }
-                else print_console("No Successful")
-            }
-        })
+        val ip = retrofit.create(BASE_URL).getNewsXml().execute()
+        list_xml=ip.body()!!.results
+        retrofit_ok(true)
     }
     catch (ex:Exception){
         print_console("ex "+ex.toString())
     }
-    fun retrofit_ok(xml:Boolean){
+   fun retrofit_ok(xml:Boolean){
         val xml_=xml
         println("0.Show all news(date format) | 1.Keyword search | 2.main menu | 3.exit")
         when(readln()){
@@ -93,7 +72,7 @@ open class Function {
                             element::date
                         )
                     )) {
-                        print_console("xml "+date_converter(arr.date) + " | " + arr.description)
+                        print_console(date_converter(arr.date) + " | " + arr.description)
                     }
                 }
                 else
@@ -101,7 +80,7 @@ open class Function {
                     for (arr in list.sortedWith(
                         compareBy(
                             news::date))) {
-                        print_console("json "+date_converter(arr.date)+" | "+arr.description)
+                        print_console(date_converter(arr.date)+" | "+arr.description)
                     }
                 }
             }
@@ -109,7 +88,7 @@ open class Function {
             "3"-> System.exit(0)
         }
 
-            //  retrofit_ok(xml_)
+              retrofit_ok(xml_)
     }
     fun date_converter(date:String):String{
         val serverDateFormat = SimpleDateFormat("yyyy-MM-dd' 'HH:mm:ss", Locale.getDefault())
@@ -118,13 +97,4 @@ open class Function {
         return userDateFormat.format(defaultDate)
     }
     private fun print_console(str:String)= println(str)
-
-    companion object Common {
-        val retrofitService: retrofit_interface
-            get() = Retrofit_client.getClient(BASE_URL).create(retrofit_interface::class.java)
-    }
-    object CommonXml {
-        val retrofitService: retrofit_interface
-            get() = Retrofit_client.getClientXML(BASE_URL).create(retrofit_interface::class.java)
-    }
 }
