@@ -7,7 +7,6 @@ import java.util.*
 private val BASE_URL = "https://api2.kiparo.com"
 private lateinit var list_xml:List<element>
 private lateinit var list:List<news>
-private lateinit var generalData: general_data
 open class Function {
     fun init()
     {
